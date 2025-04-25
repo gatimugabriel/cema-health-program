@@ -7,6 +7,7 @@ import "reflect-metadata";
 
 import errorMiddleware from "./shared/errors/errors";
 import { DB } from "./infrastructure/database/data-source";
+import routes from "./api/routes";
 
 dotenv.config()
 const app = express()
@@ -28,6 +29,9 @@ const corsOptions: cors.CorsOptions = {
     exposedHeaders: ['Content-Length', 'X-JSON'],
 }
 app.use(cors(corsOptions))
+
+const base_api = "/api/v1";
+routes(app, base_api) 
 
 //Global Error Middlewares
 app.use(errorMiddleware.notFound)
