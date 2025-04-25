@@ -6,12 +6,13 @@ import dotenv from "dotenv";
 import "reflect-metadata";
 
 import errorMiddleware from "./shared/errors/errors";
+import { DB } from "./infrastructure/database/data-source";
 
 dotenv.config()
 const app = express()
 
-app.use(express.json({limit: '50mb'}))
-app.use(express.urlencoded({limit: '50mb', extended: true}))
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
 app.use(morgan('dev'))
 app.use(cookieParser())
 
@@ -35,9 +36,15 @@ app.use(errorMiddleware.handleErrors)
 const PORT = parseInt(process.env["PORT"] as string) || 8080
 const HOST = process.env["HOST"] || '0.0.0.0'
 
-app.listen(PORT, HOST, () => {
-    console.log(`Server is running on port: ${PORT}`)
-})
+DB.initialize()
+    .then(() => {
+        console.log('Database connected successfully')
+
+        app.listen(PORT, HOST, () => {
+            console.log(`Server is running on port: ${PORT}`)
+        })
+    })
+    .catch((error) => console.log(error))
 
 process.on('SIGINT', () => {
     console.log('Server is shutting down...')
