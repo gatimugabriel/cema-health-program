@@ -33,7 +33,7 @@ import { Program } from './Program';
     enrollmentDate: Date;
   
     @Column({ type: 'date', nullable: true })
-    exitDate: Date;
+    exitDate: Date | null;
   
     @Column({ default: 'active' })
     status: 'active' | 'completed' | 'withdrawn';

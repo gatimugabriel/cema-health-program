@@ -58,7 +58,7 @@ export class EnrollmentService {
     async getEnrollmentsByClientId(clientId: string): Promise<Enrollment[]> {
         const client = await this.clientRepository.findById(clientId);
         if (!client) {
-            throw new Error('Client not found!');
+            throw new Error("Client with this ID not found!");
         }
 
         return this.enrollmentRepository.findByClientId(clientId);
