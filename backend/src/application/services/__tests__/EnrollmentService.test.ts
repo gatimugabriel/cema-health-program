@@ -354,7 +354,7 @@ describe('EnrollmentService', () => {
             const programId = 'abcd-uuid-uuid-uuid';
             mockProgramRepository.findById.mockResolvedValue(null);
 
-            await expect(enrollmentService.getEnrollmentsByProgramId(programId)).rejects.toThrow('Program with given ID not found!');
+            await expect(enrollmentService.getEnrollmentsByProgramId(programId)).rejects.toThrow('Program with given ID was not found!');
             expect(mockEnrollmentRepository.findByProgramId).not.toHaveBeenCalled();
         });
     })
