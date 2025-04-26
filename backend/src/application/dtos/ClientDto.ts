@@ -2,7 +2,7 @@ export interface CreateClientDto {
     firstName: string;
     lastName: string;
     identificationNumber: string;
-    email: string;
+    email?: string;
     phone?: string;
     dateOfBirth: Date;
     gender: 'male' | 'female' | 'other';
