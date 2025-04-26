@@ -14,7 +14,6 @@ describe('ClientService', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-
         mockClientRepository = {
             findAll: jest.fn(),
             findById: jest.fn(),
@@ -146,16 +145,25 @@ describe('ClientService', () => {
                 }
             ];
 
-            mockClientRepository.findAll.mockResolvedValue({clients: clients, totalCount: clients.length});
 
+            mockClientRepository.findAll.mockResolvedValue({
+                clients,
+                totalCount: clients.length
+            });
 
             const result = await clientService.getAllClients();
 
-            expect(mockClientRepository.findAll).toHaveBeenCalled();
-            expect(result).toEqual(clients);
+            expect(mockClientRepository.findAll).toHaveBeenCalledWith(1, 10); // Default page and pageSize
+            expect(result).toEqual({
+                clients,
+                totalCount: clients.length,
+                totalPages: 1
+            });
         })
         ;
     });
+
+
 
 
     describe('searchClients', () => {
@@ -181,12 +189,20 @@ describe('ClientService', () => {
                 },
             ];
 
-            mockClientRepository.search.mockResolvedValue({clients, totalCount: clients.length});
+            mockClientRepository.search.mockResolvedValue({
+                clients,
+                totalCount: clients.length
+            });
 
             const result = await clientService.searchClients(query);
 
-            expect(mockClientRepository.search).toHaveBeenCalledWith(query);
-            expect(result).toEqual(clients);
+            expect(mockClientRepository.search).toHaveBeenCalledWith(query, 1, 10);
+            expect(result).toEqual({
+                clients,
+                totalCount: clients.length,
+                totalPages: 1
+            });
+
         });
     });
 });

@@ -14,9 +14,10 @@ export const TestDataSource = new DataSource({
     database: `${process.env.DB_NAME}_test`,
     schema: `${process.env.DB_SCHEMA}`,
 
-    synchronize: true,
-    dropSchema: true,  //clean up after each test suite
     logging: false,
+    synchronize: false,
+    migrationsRun: false,
+    dropSchema: false,
 
     entities: ['./src/domain/entities/*.ts'],
     migrations: [],
