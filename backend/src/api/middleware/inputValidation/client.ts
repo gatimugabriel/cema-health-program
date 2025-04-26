@@ -1,4 +1,4 @@
-import {check, body} from "express-validator";
+import {check, body, query} from "express-validator";
 
 export const validateClientData = [
     check('firstName').notEmpty().withMessage('First name is required').isLength({ min: 3 }).withMessage("firstName should be at least 3 characters"),
@@ -41,5 +41,7 @@ export const validateClientUpdateData = [
 ];
 
 export const validateClientSearchQuery = [
-    check('query').optional()
+    query('q').optional().isString().withMessage('Search query must be a string'),
+    query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+    query('pageSize').optional().isInt({ min: 1, max: 100 }).withMessage('Page size must be between 1 and 100')
 ];

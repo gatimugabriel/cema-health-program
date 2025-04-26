@@ -10,11 +10,14 @@ export class ClientRepositoryImpl implements IClientRepository {
         this.repo = DB.getRepository(Client)
     }
 
-    async findAll(query?: any): Promise<Client[]> {
-        return this.repo.find({
+    async findAll(page: number = 1, pageSize: number = 15): Promise<{ clients: Client[]; totalCount: number }> {
+        const skip = (page - 1) * pageSize
+        const [clients, totalCount] = await this.repo.findAndCount({
             relations: ['enrollments', 'enrollments.program'],
-            ...query
+            skip,
+            take: pageSize
         });
+        return { clients, totalCount };
     }
 
     async findById(id: string): Promise<Client | null> {
@@ -46,8 +49,14 @@ export class ClientRepositoryImpl implements IClientRepository {
         return !!deleteResult.affected;
     }
 
-    async search(query: string): Promise<Client[]> {
-        return this.repo.find({
+    /**
+     * Searches for clients based on a query string.
+     * this method is also paginated
+     * */
+    async search(query: string, page: number = 1, pageSize: number = 10): Promise<{ clients: Client[]; totalCount: number }> {
+        const skip = (page - 1) * pageSize;
+
+        const [clients, totalCount] = await this.repo.findAndCount({
             where: [
                 { firstName: ILike(`%${query}%`) },
                 { lastName: ILike(`%${query}%`) },
@@ -55,7 +64,11 @@ export class ClientRepositoryImpl implements IClientRepository {
                 { email: ILike(`%${query}%`) },
                 { phone: ILike(`%${query}%`) }
             ],
-            relations: ['enrollments', 'enrollments.program']
+            relations: ['enrollments', 'enrollments.program'],
+            skip,
+            take: pageSize
         });
+
+        return { clients, totalCount };
     }
 }

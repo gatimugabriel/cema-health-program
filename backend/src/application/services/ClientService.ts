@@ -15,8 +15,18 @@ export class ClientService {
         return this.clientRepository.create(clientData);
     }
 
-    async getAllClients(): Promise<Client[]> {
-        return this.clientRepository.findAll();
+
+    /**
+     * Retrieves all clients with pagination.
+     * @param page - The page number to retrieve.
+     * @param pageSize - The number of clients per page.
+     * @returns An object containing the clients, total count, and total pages.
+     * */
+    async getAllClients(page: number = 1, pageSize: number = 10): Promise<{ clients: Client[]; totalCount: number; totalPages: number }> {
+        const { clients, totalCount } = await this.clientRepository.findAll(page, pageSize);
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        return { clients, totalCount, totalPages };
     }
 
     async getClientById(id: string): Promise<Client | null> {
@@ -63,7 +73,22 @@ export class ClientService {
         return this.clientRepository.delete(id);
     }
 
-    async searchClients(query: string): Promise<Client[]> {
-        throw new Error("yet to implement")
+    /**
+     * Searches for clients based on a query string.
+     * this method is also paginated
+     * @param query - The search query.
+     * @param page - The page number to retrieve.
+     * @param pageSize - The number of clients per page.
+     * @returns An object containing the clients, total count, and total pages.
+     * */
+    async searchClients(query: string, page: number = 1, pageSize: number = 10): Promise<{ clients: Client[]; totalCount: number; totalPages: number }> {
+        if (!query || query.trim() === '') {
+            return this.getAllClients(page, pageSize);
+        }
+
+        const { clients, totalCount } = await this.clientRepository.search(query, page, pageSize);
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        return { clients, totalCount, totalPages };
     }
 }

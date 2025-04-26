@@ -33,10 +33,19 @@ export class ClientController {
 
     async getAllClients(req: Request, res: Response): Promise<void> {
         try {
-            const clients = await this.clientService.getAllClients();
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+            const { clients, totalCount, totalPages } = await this.clientService.getAllClients(page, pageSize);
             res.status(200).json({
                 success: true,
                 data: clients,
+                pagination: {
+                    page,
+                    pageSize,
+                    totalCount,
+                    totalPages
+                }
             });
         } catch (error) {
             res.status(500);
@@ -91,7 +100,22 @@ export class ClientController {
 
     async searchClients(req: Request, res: Response): Promise<void> {
         try {
-        console.log("searching")
+            const query = req.query.q as string;
+            const page = parseInt(req.query.page as string) || 1;
+            const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+            const { clients, totalCount, totalPages } = await this.clientService.searchClients(query, page, pageSize);
+
+            res.status(200).json({
+                success: true,
+                data: clients,
+                pagination: {
+                    page,
+                    pageSize,
+                    totalCount,
+                    totalPages
+                }
+            });
         } catch (error) {
             res.status(500);
             throw new Error(`Error searching clients: ${(error as Error).message}`);
