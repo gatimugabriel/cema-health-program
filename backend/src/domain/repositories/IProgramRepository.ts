@@ -5,6 +5,6 @@ export interface IProgramRepository {
     findById(id: string): Promise<Program | null>
     findByName(name: string): Promise<Program | null>
     create(programData: Partial<Program>): Promise<Program>
-    update(id: string, programData: Partial<Program>): Promise<Program>
+    update(id: string, programData: Partial<Program>): Promise<Program | null>
     delete(id: string): Promise<boolean>
 }
