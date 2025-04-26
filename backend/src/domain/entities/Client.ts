@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BeforeInsert, BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
 import { Enrollment } from './Enrollment';
 
 @Entity('clients')
@@ -15,7 +23,7 @@ export class Client {
   @Column({ unique: true })
   identificationNumber: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   email: string;
 
   @Column({ nullable: true })
@@ -38,4 +46,12 @@ export class Client {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  validateContactInfo() {
+    if (!this.email && !this.phone) {
+      throw new Error("Either email or phone must be provided. You cannot have both missing");
+    }
+  }
 }
