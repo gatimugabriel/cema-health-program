@@ -77,6 +77,19 @@ export class EnrollmentController {
         }
     }
 
+    async getAllEnrollments(req: Request, res: Response): Promise<void> {
+        try {
+            const enrollments = await this.enrollmentService.getAll();
+            res.status(200).json({
+                success: true,
+                data: enrollments,
+            });
+        } catch (error) {
+            res.status(404);
+            throw new Error(`Error fetching enrollments: ${(error as Error).message}`);
+        }
+    }
+
     async updateEnrollment(req: Request, res: Response): Promise<void> {
         try {
             const {id} = req.params;

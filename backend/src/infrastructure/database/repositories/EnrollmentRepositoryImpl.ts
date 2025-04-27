@@ -49,6 +49,9 @@ export class EnrollmentRepositoryImpl implements IEnrollmentRepository {
         });
     }
 
+    findAll(): Promise<Enrollment[]> {
+        return this.repo.find({ relations: ['program', 'client'] });
+    }
 
     async update(id: string, enrollmentData: Partial<Enrollment>): Promise<Enrollment> {
         await this.repo.update(id, enrollmentData);

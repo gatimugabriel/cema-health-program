@@ -5,6 +5,7 @@ export interface IEnrollmentRepository {
     findByClientId(clientId: string): Promise<Enrollment[]>;
     findByProgramId(programId: string): Promise<Enrollment[]>;
     findByClientAndProgram(clientId: string, programId: string): Promise<Enrollment | null>;
+    findAll(): Promise<Enrollment[]>;
     create(enrollmentData: Partial<Enrollment>): Promise<Enrollment>;
     update(id: string, enrollmentData: Partial<Enrollment>): Promise<Enrollment>;
     delete(id: string): Promise<boolean>;
