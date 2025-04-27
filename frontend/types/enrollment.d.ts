@@ -1,3 +1,5 @@
+import {Client} from "@/types/client";
+
 export interface Enrollment {
     id: string;
     clientID: string;
@@ -6,15 +8,19 @@ export interface Enrollment {
     status: 'active' | 'completed' | 'withdrawn';
     enrollmentDate: string;
     exitDate?: string;
+    notes?: string;
     createdAt: string;
     updatedAt: string;
 
-    program: {
-        name: string
-    }
+    program: Program
+    client: Client
+}
 
-    client: {
-        firstName: string
-        lastName: string
-    }
+interface CreateEnrollmentDto {
+    clientID: string;
+    programID: string;
+    enrollmentDate?: Date;
+    exitDate?: Date | null;
+    status?: 'active' | 'completed' | 'withdrawn';
+    notes?: string;
 }
