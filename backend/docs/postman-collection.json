@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "6b6037a8-a3c7-49bb-98b1-645e4b973888",
+		"name": "CEMA-health-info-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "24249138"
+	},
+	"item": [
+		{
+			"name": "PROGRAMS",
+			"item": [
+				{
+					"name": "Create Program",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Malaria Program\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/program"
+					},
+					"response": []
+				},
+				{
+					"name": "GET All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/program"
+					},
+					"response": []
+				},
+				{
+					"name": "View Program",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/program/fcadb3cd-934a-4b1d-b83c-fff0434f93f5"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Malaria Program\",\n    \"description\":\"Vaccination for ....\",\n    \"active\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/program/83a3b746-319c-4009-9b47-abfc9ae693ab"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Malaria Program\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/program/83a3b746-319c-4009-9b47-abfc9ae693ab"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CLIENTS",
+			"item": [
+				{
+					"name": "Register New Client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Gabriel\",\n    \"lastName\": \"Gabriel\",\n    \"identificationNumber\":12345678,\n    \"dateOfBirth\":\"2025-04-26\",\n    \"phone\":\"+254796677429\",\n    \"gender\":\"male\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/client"
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/client/search?page=1&pageSize=10&q=gab",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"client",
+								"search"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "q",
+									"value": "gab"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/client"
+					},
+					"response": []
+				},
+				{
+					"name": "View Client Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/client/d31a22f1-0452-4c0c-a7d4-cd4c42462ae1"
+					},
+					"response": []
+				},
+				{
+					"name": "View Using ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/client/identification/1234567"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lastName\":\"Gatimu\",\n    \"address\":\"Nakuru, KE\",\n    \"identificationNumber\":1234567\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/client/d31a22f1-0452-4c0c-a7d4-cd4c42462ae1"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Malaria Program\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/client/d31a22f1-0452-4c0c-a7d4-cd4c42462ae1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ENROLLMENTS",
+			"item": [
+				{
+					"name": "Enroll Client to Program",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientID\": \"7a200c6c-7a92-4120-b4f6-784a8d702a04\",\n    \"programID\": \"de5147ca-4058-4646-a4cd-1837b634f69e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/enrollment"
+					},
+					"response": []
+				},
+				{
+					"name": "View PROGRAM Enrollments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/enrollment/program/df620e2b-1287-48c2-a848-c4bcaa8bf3cd"
+					},
+					"response": []
+				},
+				{
+					"name": "View CLIENT Enrollments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/enrollment/client/9955a9c4-21eb-46c2-9d5b-41effabdc388"
+					},
+					"response": []
+				},
+				{
+					"name": "View Using ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/enrollment/6aa1c1b3-3e76-47ff-a0c9-d0f5199c4cc0"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"completed\",\n    \"notes\": \"Client performed really well\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/enrollment/12a1e02f-4319-4709-b215-b91271712f38"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Malaria Program\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/enrollment/d31a22f1-0452-4c0c-a7d4-cd4c42462ae1"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
