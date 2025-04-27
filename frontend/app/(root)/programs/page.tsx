@@ -163,6 +163,9 @@ export default function ProgramsPage() {
                                                     <DropdownMenuItem onClick={() => router.push(`/programs/${program.id}`)}>
                                                         View Details
                                                     </DropdownMenuItem>
+                                                    <DropdownMenuItem className={`bg-green-500/10`} onClick={() => router.push(`/enrollments/new/via-program/${program.id}`)}>
+                                                        Enroll clients
+                                                    </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={() => router.push(`/programs/${program.id}/edit`)}>
                                                         <Edit className="mr-2 h-4 w-4" /> Edit
                                                     </DropdownMenuItem>

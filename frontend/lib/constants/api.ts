@@ -4,10 +4,12 @@ export const API_ENDPOINTS = {
     // Programs
     PROGRAMS: `${API_BASE_URL}/program`,
     PROGRAM: (id: string) => `${API_BASE_URL}/program/${id}`,
+    PROGRAMS_SEARCH: `${API_BASE_URL}/program/search`,
 
     // Clients
     CLIENTS: `${API_BASE_URL}/client`,
     CLIENTS_SEARCH: `${API_BASE_URL}/client/search`,
+    CLIENTS_SEARCH_WITHOUT_PAGINATION: `${API_BASE_URL}/client/searchwp`,
     CLIENT: (id: string) => `${API_BASE_URL}/client/${id}`,
     CLIENT_BY_ID_NUMBER: (idNumber: string) => `${API_BASE_URL}/client/identification/${idNumber}`,
 

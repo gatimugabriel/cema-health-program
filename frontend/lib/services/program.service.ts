@@ -1,4 +1,6 @@
 import { API_ENDPOINTS } from "@/lib/constants/api";
+import {Client, ClientSearchParams} from "@/types/client";
+import {PaginatedResponse} from "@/types/common";
 
 const programService = {
     getPrograms: async (): Promise<Program[]> => {
@@ -88,6 +90,31 @@ const programService = {
             return await response.json();
         } catch (error) {
             console.error(`Failed to update program:`, error);
+            throw error;
+        }
+    },
+
+    searchProgram: async (params: any = {}): Promise<PaginatedResponse<Program>> => {
+        const {page = 1, pageSize = 10, query = '', sortBy, sortOrder} = params;
+
+        const searchParams = new URLSearchParams();
+        searchParams.append('page', page.toString());
+        searchParams.append('pageSize', pageSize.toString());
+        searchParams.append('query', query);
+
+        if (sortBy) searchParams.append('sortBy', sortBy);
+        if (sortOrder) searchParams.append('sortOrder', sortOrder);
+
+        try {
+            const response = await fetch(`${API_ENDPOINTS.PROGRAMS_SEARCH}?${searchParams.toString()}`);
+
+            if (!response.ok) {
+                throw new Error(`Error searching programs: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Failed to search programs:", error);
             throw error;
         }
     },

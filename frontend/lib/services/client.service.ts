@@ -59,6 +59,30 @@ const clientService = {
     },
 
     /**
+     * Search clients without pagination
+     */
+    searchClientsWithoutPagination: async (params: ClientSearchParams = {}): Promise<Client[]> => {
+        const {query = ''} = params;
+
+        const searchParams = new URLSearchParams();
+        searchParams.append('query', query);
+
+        try {
+            const response = await fetch(`${API_ENDPOINTS.CLIENTS_SEARCH_WITHOUT_PAGINATION}?${searchParams.toString()}`);
+
+            if (!response.ok) {
+                throw new Error(`Error searching clients: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Failed to search clients:", error);
+            throw error;
+        }
+    },
+
+
+    /**
      * Get client by ID
      */
     getClientById: async (id: string): Promise<Client> => {
