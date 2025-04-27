@@ -1,5 +1,5 @@
 import {API_ENDPOINTS} from "../constants/api";
-import {Client, ClientFormData, ClientSearchParams, Enrollment} from "@/types/client";
+import {Client, ClientFormData, ClientSearchParams} from "@/types/client";
 import {PaginatedResponse} from "@/types/common";
 
 const clientService = {
@@ -93,7 +93,7 @@ const clientService = {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => null);
-                console.log(errorData,"errorData")
+                console.log(errorData, "errorData")
                 throw new Error(
                     errorData?.message || `Error creating client: ${response.status}`
                 );
@@ -169,26 +169,6 @@ const clientService = {
             throw error;
         }
     },
-
-    /**
-     * Get client enrollments
-     */
-    getClientEnrollments: async (clientId: string): Promise<Enrollment[]> => {
-        try {
-            const response = await fetch(API_ENDPOINTS.CLIENT_ENROLLMENTS(clientId));
-
-            if (!response.ok) {
-                throw new Error(`Error fetching client enrollments: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("enrollments data", data)
-            return data.data
-        } catch (error) {
-            console.error(`Failed to fetch enrollments for client ${clientId}:`, error);
-            throw error;
-        }
-    }
 }
 
 export default clientService;

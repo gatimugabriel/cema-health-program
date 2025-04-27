@@ -10,9 +10,12 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Badge} from "@/components/ui/badge";
 import {ArrowLeft, CalendarRange, Edit, FileText, Mail, MapPin, Phone, Plus, User} from "lucide-react";
 
-import {Client, Enrollment} from "@/types/client";
+import {Client} from "@/types/client";
+import {Enrollment} from "@/types/enrollment";
 import clientService from "@/lib/services/client.service";
+import enrollmentService from "@/lib/services/enrollment.service";
 import {formatDate} from "@/lib/utils";
+import StatusBadge from "@/components/status-badge";
 
 type ClientDetailPageProps = {
     params: {
@@ -28,7 +31,8 @@ export default function ClientDetailPage({params}: { params: { id: string } }) {
     const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const {getClientById, getClientEnrollments} = clientService;
+    const {getClientById} = clientService;
+    const {getClientEnrollments} = enrollmentService;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -273,25 +277,3 @@ export default function ClientDetailPage({params}: { params: { id: string } }) {
     );
 }
 
-// Status badge component
-function StatusBadge({status}: { status: string }) {
-    let variant: "default" | "outline" | "secondary" | "destructive" = "outline";
-
-    switch (status) {
-        case "active":
-            variant = "default";
-            break;
-        case "completed":
-            variant = "secondary";
-            break;
-        case "withdrawn":
-            variant = "destructive";
-            break;
-    }
-
-    return (
-        <Badge variant={variant} className="capitalize">
-            {status}
-        </Badge>
-    );
-}
