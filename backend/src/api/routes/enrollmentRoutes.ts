@@ -9,6 +9,7 @@ const controller = new EnrollmentController();
 router.post("/", ...validateEnrollmentData, validate, controller.createEnrollment.bind(controller)); //enroll
 router.get("/client/:clientId", controller.getEnrollmentsByClientId.bind(controller)); //get client enrollments
 router.get("/program/:programId", controller.getEnrollmentsByProgramId.bind(controller)); //get program enrollments
+router.get("/", controller.getAllEnrollments.bind(controller));
 
 router.route("/:id")
     .get(controller.getById.bind(controller))

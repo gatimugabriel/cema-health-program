@@ -73,6 +73,10 @@ export class EnrollmentService {
         return this.enrollmentRepository.findByProgramId(programId);
     }
 
+    async  getAll(): Promise<Enrollment[]> {
+        return this.enrollmentRepository.findAll();
+    }
+
     async updateEnrollment(id: string, enrollmentData: UpdateEnrollmentDto): Promise<Enrollment> {
         const enrollment = await this.enrollmentRepository.findById(id);
         if (!enrollment) {
