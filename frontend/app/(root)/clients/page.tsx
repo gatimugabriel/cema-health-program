@@ -325,7 +325,7 @@ export default function ClientsPage() {
                                                     {client.lastName}, {client.firstName}
                                                 </Link>
                                             </TableCell>
-                                            <TableCell>{client.phoneNumber || "—"}</TableCell>
+                                            <TableCell>{client.phone || "—"}</TableCell>
                                             <TableCell className="capitalize">{client.gender || "—"}</TableCell>
                                             <TableCell>
                                                 <DropdownMenu>
