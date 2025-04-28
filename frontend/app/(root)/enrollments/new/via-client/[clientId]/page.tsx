@@ -3,36 +3,33 @@ import clientService from "@/lib/services/client.service";
 import { EnrollmentForm } from "@/components/enrollment-form";
 
 interface ClientEnrollmentPageProps {
-    params: {
-        clientId: string;
-    };
+    params: Promise<{ clientId: string }>;
 }
 
 export default async function ClientEnrollmentPage({
                                                        params,
                                                    }: ClientEnrollmentPageProps) {
-    try {
-        const client = await clientService.getClientById(params.clientId);
+    const pageParams = await params
+    const client = await clientService.getClientById(pageParams.clientId).catch(() => null);
 
-        return (
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">
-                        Enroll {client.firstName} {client.lastName}
-                    </h1>
-                </div>
+    if (!client) return notFound();
 
-                <div className="mb-4">
-                    <h2 className="text-lg font-medium">Client Information</h2>
-                    <p>
-                        {client.firstName} {client.lastName} ({client.identificationNumber})
-                    </p>
-                </div>
-
-                <EnrollmentForm clientId={client.id} />
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold">
+                    Enroll {client.firstName} {client.lastName}
+                </h1>
             </div>
-        );
-    } catch (error) {
-        return notFound();
-    }
+
+            <div className="mb-4">
+                <h2 className="text-lg font-medium">Client Information</h2>
+                <p>
+                    {client.firstName} {client.lastName} ({client.identificationNumber})
+                </p>
+            </div>
+
+            <EnrollmentForm clientId={client.id} />
+        </div>
+    );
 }

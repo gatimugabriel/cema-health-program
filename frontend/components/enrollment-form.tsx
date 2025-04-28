@@ -11,7 +11,7 @@ import {CalendarIcon} from "lucide-react";
 import {format} from "date-fns";
 import {Textarea} from "@/components/ui/textarea";
 import {enrollmentFormSchema} from "@/lib/validation/enrollment.validation";
-import {z} from "zod";
+import { z} from "zod";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
 import enrollmentService from "@/lib/services/enrollment.service";
@@ -50,18 +50,20 @@ export function EnrollmentForm({
             await enrollmentService.createEnrollment({
                 clientID: values.clientID,
                 programID: values.programID,
-                enrollmentDate: values.enrollmentDate,
-                exitDate: values.exitDate,
-                status: values.status,
-                notes: values.notes,
+                enrollmentDate: values.enrollmentDate  ,
+                exitDate: values.exitDate as Date,
+                status: values.status || "active",
+                notes: values.notes
             });
 
             toast("Success", {
                 description: "Enrollment created successfully",
             });
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             onSuccess?.() || router.push("/enrollments");
         } catch (error) {
+            console.log(error)
             toast("Error", {
                 description: "Failed to create enrollment",
             });
@@ -77,7 +79,7 @@ export function EnrollmentForm({
                         <FormField
                             control={form.control}
                             name="clientID"
-                            render={({field}) => (
+                            render={() => (
                                 <FormItem>
                                     <FormLabel>Client</FormLabel>
                                     <ClientSearch onSelect={(id) => form.setValue("clientID", id)}/>
@@ -92,7 +94,7 @@ export function EnrollmentForm({
                         <FormField
                             control={form.control}
                             name="programID"
-                            render={({field}) => (
+                            render={() => (
                                 <FormItem>
                                     <FormLabel>Program</FormLabel>
                                     <ProgramSearch onSelect={(id) => form.setValue("programID", id)}/>

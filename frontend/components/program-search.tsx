@@ -15,6 +15,7 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [programs, setPrograms] = useState<Program[]>([]);
+    const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -36,8 +37,9 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
                     paginate: false
                 });
                 setPrograms(response.data);
-            } catch (error: any) {
-                setError(error.message);
+            } catch (error: unknown) {
+                // @ts-expect-error - unknown error
+                setError(error?.message);
             } finally {
                 setIsLoading(false);
             }
@@ -59,14 +61,14 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
                     aria-expanded={open}
                     className="w-full justify-between"
                 >
-                    {searchQuery || "Search programs..."}
+                    {searchQuery || selectedProgram || "Search programs..."}
                     <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[400px] p-0">
                 <Command shouldFilter={false}>
                     <CommandInput
-                        placeholder="Search programs by name..."
+                        placeholder={selectedProgram || "Search programs by name..."}
                         value={searchQuery}
                         onValueChange={setSearchQuery}
                     />
@@ -87,6 +89,7 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
                                                 onSelect(program.id);
                                                 setOpen(false);
                                                 setSearchQuery("");
+                                                setSelectedProgram(program.name)
                                             }}
                                         >
                                             {program.name}

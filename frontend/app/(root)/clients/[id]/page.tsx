@@ -1,53 +1,51 @@
 "use client";
 
-import {use, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import Link from "next/link";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Suspense, use} from "react"
+import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Badge} from "@/components/ui/badge";
 import {ArrowLeft, CalendarRange, Edit, FileText, Mail, MapPin, Phone, Plus, User} from "lucide-react";
-
-import {Client} from "@/types/client";
-import {Enrollment} from "@/types/enrollment";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
+import StatusBadge from "@/components/status-badge";
 import clientService from "@/lib/services/client.service";
 import enrollmentService from "@/lib/services/enrollment.service";
 import {formatDate} from "@/lib/utils";
-import StatusBadge from "@/components/status-badge";
+import {Client} from "@/types/client";
+import {Enrollment} from "@/types/enrollment";
 
-type ClientDetailPageProps = {
-    params: {
-        id: string;
-    };
-};
+interface ClientDetailPageProps {
+    params: Promise<{ id: string }>;
+}
 
-export default function ClientDetailPage({params}: { params: { id: string } }) {
-    // @ts-ignore
-    const pageParams: ClientDetailPageProps['params'] = use(params)
+function ClientDetail({ id }: { id: string }) {
     const router = useRouter();
     const [client, setClient] = useState<Client | null>(null);
     const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const {getClientById} = clientService;
-    const {getClientEnrollments} = enrollmentService;
 
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             setError(null);
+            const {getClientById} = clientService;
+            const {getClientEnrollments} = enrollmentService;
 
             try {
                 // Fetch client details
-                const clientData = await getClientById(pageParams.id);
+                const clientData = await getClientById(id);
                 setClient(clientData);
 
                 // Fetch client enrollments
-                const enrollmentsData = await getClientEnrollments(pageParams.id);
+                const enrollmentsData = await getClientEnrollments(id);
                 setEnrollments(enrollmentsData);
-            } catch (err: any) {
+
+                // @ts-expect-error - never types
+            } catch (err: never) {
                 setError(err.message || "Failed to load client data");
                 console.error("Error fetching client data:", err);
             } finally {
@@ -55,8 +53,9 @@ export default function ClientDetailPage({params}: { params: { id: string } }) {
             }
         };
 
-        fetchData();
-    }, [pageParams.id]);
+        fetchData().then(() => {
+        })
+    }, [id]);
 
     if (isLoading) {
         return (
@@ -274,6 +273,20 @@ export default function ClientDetailPage({params}: { params: { id: string } }) {
                 </TabsContent>
             </Tabs>
         </div>
+    );
+}
+
+export default function ClientDetailPage({ params }: ClientDetailPageProps) {
+    const {id} = use(params)
+
+    return (
+        <Suspense fallback={<div className="container mx-auto py-6 flex justify-center items-center min-h-[60vh]">
+            <div className="text-center">
+                <p className="text-lg">Loading client information...</p>
+            </div>
+        </div>}>
+            <ClientDetail id={id} />
+        </Suspense>
     );
 }
 

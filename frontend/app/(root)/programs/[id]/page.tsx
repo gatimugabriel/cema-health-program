@@ -27,15 +27,11 @@ import {formatDate} from "@/lib/utils";
 import StatusBadge from "@/components/status-badge";
 
 interface ProgramDetailPageProps {
-    params: {
-        id: string;
-    };
+    params: Promise<{ id: string }>;
 }
 
 export default function ProgramDetailPage({params}: ProgramDetailPageProps) {
-    // @ts-ignore
-    const pageParams: ProgramDetailPageProps['params'] = use(params)
-
+const {id} = use(params)
     const router = useRouter();
     const [program, setProgram] = useState<Program | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -45,34 +41,34 @@ export default function ProgramDetailPage({params}: ProgramDetailPageProps) {
     const {getProgramEnrollments} = enrollmentService;
 
     useEffect(() => {
+        const fetchProgramDetails = async () => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const data = await programService.getProgramById(id);
+                setProgram(data);
+
+                // Fetch enrollments
+                const enrollmentsData = await getProgramEnrollments(id);
+                setEnrollments(enrollmentsData);
+            } catch (error) {
+                console.error("Failed to fetch program details:", error);
+                setError("Failed to load program details. Please try again.");
+                toast("Error", {
+                    description: "Failed to load program details",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
         fetchProgramDetails();
-    }, [pageParams.id]);
-
-    const fetchProgramDetails = async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const data = await programService.getProgramById(pageParams.id);
-            setProgram(data);
-
-            // Fetch enrollments
-            const enrollmentsData = await getProgramEnrollments(pageParams.id);
-            setEnrollments(enrollmentsData);
-        } catch (error) {
-            console.error("Failed to fetch program details:", error);
-            setError("Failed to load program details. Please try again.");
-            toast("Error", {
-                description: "Failed to load program details",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    }, [getProgramEnrollments, id]);
 
     const handleDelete = async () => {
         try {
-            await programService.deleteProgram(pageParams.id);
+            await programService.deleteProgram(id);
             toast("Success", {
                 description: "Program deleted successfully",
             });
@@ -125,7 +121,7 @@ export default function ProgramDetailPage({params}: ProgramDetailPageProps) {
                     </span>
                 </div>
                 <div className="flex space-x-2">
-                    <Button variant="outline" onClick={() => router.push(`/programs/${pageParams.id}/edit`)}>
+                    <Button variant="outline" onClick={() => router.push(`/programs/${id}/edit`)}>
                         <Edit className="mr-2 h-4 w-4"/>
                         Edit
                     </Button>
