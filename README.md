@@ -159,6 +159,12 @@ cp .env.example .env
 pnpm run dev # or npm run dev
 ```
 
+5. Add test data
+If you wish to seed initial test data into the database, run:
+```bash
+pnpm run db:seed # or npm run db:seed
+```
+
 The backend API will be available at `http://localhost:8080` or at the `PORT` which you set in `.env`
 
 #### Frontend Setup
