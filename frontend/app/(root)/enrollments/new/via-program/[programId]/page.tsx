@@ -3,15 +3,15 @@ import  programService  from "@/lib/services/program.service";
 import { EnrollmentForm } from "@/components/enrollment-form";
 
 interface ProgramEnrollmentPageProps {
-    params: {
-        programId: string;
-    };
+    params: Promise<{ programId: string }>;
 }
 
 export default async function ProgramEnrollmentPage({
                                                         params,
                                                     }: ProgramEnrollmentPageProps) {
-    const program = await programService.getProgramById(params.programId);
+
+    const pageParams = await params.then().catch().finally();
+    const program = await programService.getProgramById(pageParams.programId);
     if (!program) return notFound();
 
     return (

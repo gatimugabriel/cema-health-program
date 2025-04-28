@@ -83,19 +83,19 @@ export default function DashboardPage() {
                         <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <Button asChild>
+                        <Button asChild className={`text-white`}>
                             <Link href="/clients/new">
                                 <PlusIcon className="mr-2 h-4 w-4" />
                                 Add New Client
                             </Link>
                         </Button>
-                        <Button asChild>
+                        <Button asChild className={`text-white`}>
                             <Link href="/programs/new">
                                 <PlusIcon className="mr-2 h-4 w-4" />
                                 Create Program
                             </Link>
                         </Button>
-                        <Button asChild>
+                        <Button asChild className={`text-white`}>
                             <Link href="/enrollments/new">
                                 <PlusIcon className="mr-2 h-4 w-4" />
                                 New Enrollment

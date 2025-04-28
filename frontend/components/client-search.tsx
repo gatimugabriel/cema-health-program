@@ -48,8 +48,9 @@ export function ClientSearch({ onSelect }: ClientSearchProps) {
                     paginate: false
                 });
                 setClients(response.data);
-            } catch (error: any) {
-                setError(error.message);
+            } catch (error: unknown) {
+                console.error("search error", error)
+                setError("Error searching clients");
             } finally {
                 setIsLoading(false);
             }

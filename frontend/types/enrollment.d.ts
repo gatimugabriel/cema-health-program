@@ -19,8 +19,13 @@ export interface Enrollment {
 interface CreateEnrollmentDto {
     clientID: string;
     programID: string;
-    enrollmentDate?: Date;
-    exitDate?: Date | null;
-    status?: 'active' | 'completed' | 'withdrawn';
+    enrollmentDate: Date | string | undefined;
+    exitDate?: Date | string | null;
+    status: 'active' | 'completed' | 'withdrawn';
     notes?: string;
+}
+
+export interface UpdateEnrollmentDto {
+    status?: 'active' | 'completed' | 'withdrawn';
+    exitDate?: string;
 }

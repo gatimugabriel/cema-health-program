@@ -9,14 +9,11 @@ import {toast} from "sonner";
 import {Enrollment} from "@/types/enrollment";
 
 interface EnrollmentDetailPageProps {
-    params: {
-        id: string;
-    };
+    params: Promise<{ id: string }>;
 }
 
 export default function EnrollmentDetailPage({params}: EnrollmentDetailPageProps) {
-    // @ts-expect-error
-    const pageParams: EnrollmentDetailPageProps['params'] = use(params)
+    const {id} = use(params)
     const router = useRouter();
     const [enrollment, setEnrollment] = useState<Enrollment>();
     const [loading, setLoading] = useState(true);
@@ -24,7 +21,7 @@ export default function EnrollmentDetailPage({params}: EnrollmentDetailPageProps
     useEffect(() => {
         const fetchEnrollment = async () => {
             try {
-                const data = await enrollmentService.getEnrollmentById(pageParams.id);
+                const data = await enrollmentService.getEnrollmentById(id);
                 setEnrollment(data);
             } catch (error) {
                 console.error("Failed to fetch enrollment:", error);
@@ -35,17 +32,18 @@ export default function EnrollmentDetailPage({params}: EnrollmentDetailPageProps
         };
 
         fetchEnrollment();
-    }, [pageParams.id]);
+    }, [id, router]);
 
     const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this enrollment?")) {
             try {
-                await enrollmentService.deleteEnrollment(pageParams.id);
+                await enrollmentService.deleteEnrollment(id);
                 toast.success("Success", {
                     description: "Enrollment deleted successfully",
                 });
                 router.push("/enrollments");
-            } catch (error: any) {
+            } catch (error: unknown) {
+                console.error(error)
                 toast.error("Error", {
                     description: "Failed to delete enrollment",
                 });
@@ -68,7 +66,7 @@ export default function EnrollmentDetailPage({params}: EnrollmentDetailPageProps
                 <div className="flex gap-2">
                     <Button
                         variant="outline"
-                        onClick={() => router.push(`/enrollments/${pageParams.id}/edit`)}
+                        onClick={() => router.push(`/enrollments/${id}/edit`)}
                     >
                         Edit
                     </Button>

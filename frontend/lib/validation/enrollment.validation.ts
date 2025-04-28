@@ -5,6 +5,6 @@ export const enrollmentFormSchema = z.object({
     programID: z.string().min(20, "Program is required"),
     enrollmentDate: z.date().optional(),
     exitDate: z.date().nullable().optional(),
-    status: z.enum(["active", "completed", "withdrawn"]).default("active"),
+    status: z.enum(['active', 'completed', 'withdrawn']),
     notes: z.string().optional(),
 });

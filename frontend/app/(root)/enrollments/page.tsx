@@ -14,10 +14,11 @@ import {
 import  enrollmentService from "@/lib/services/enrollment.service";
 import { PlusIcon } from "lucide-react";
 import { format } from "date-fns";
+import {Enrollment} from "@/types/enrollment";
 
 export default function EnrollmentsPage() {
     const router = useRouter();
-    const [enrollments, setEnrollments] = useState<any[]>([]);
+    const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

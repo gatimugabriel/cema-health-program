@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react";
+import {Suspense, useCallback, useEffect, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Client} from "@/types/client";
 import clientService from "@/lib/services/client.service";
@@ -31,7 +31,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export default function ClientsPage() {
+ function ClientsPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -53,7 +53,7 @@ export default function ClientsPage() {
     const [selectedClient, setSelectedClient] = useState<string | null>(null);
     // const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-    const fetchClients = async () => {
+    const fetchClients = useCallback(async () => {
         setIsLoading(true);
         setError(null);
 
@@ -76,7 +76,7 @@ export default function ClientsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [pagination.page, pagination.pageSize, searchQuery]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -84,7 +84,7 @@ export default function ClientsPage() {
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [pagination.page, searchQuery]);
+    }, [fetchClients, pagination.page, searchQuery]);
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -214,7 +214,7 @@ export default function ClientsPage() {
                     <CardTitle>Search Clients</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* @ts-ignore */}
+                    {/* @ts-expect-error  - unknown error*/}
                     <form onSubmit={handleSearchChange} className="flex gap-2">
                         <div className="relative flex-1">
                             <Input
@@ -419,5 +419,13 @@ export default function ClientsPage() {
                 </AlertDialogContent>
             </AlertDialog>
         </div>
+    );
+}
+
+export default function ClientsPage() {
+    return (
+        <Suspense fallback={<div className="container mx-auto py-6">Loading clients...</div>}>
+            <ClientsPageContent />
+        </Suspense>
     );
 }

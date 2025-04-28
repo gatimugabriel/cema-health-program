@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {useState, useEffect, useCallback} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -46,38 +46,38 @@ export default function ProgramsPage() {
     const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
     const {getPrograms, deleteProgram} = programService
 
-    useEffect(() => {
-        fetchPrograms().then(() => console.log(''));
-    }, []);
-
-    const fetchPrograms = async () => {
+    const fetchPrograms = useCallback(async () => {
         setIsLoading(true);
         setError(null);
 
         try {
             const data = await getPrograms();
             setPrograms(data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             setError("Failed to load programs. Please try again later.");
             console.error("Error fetching programs:", err);
             toast.error("Error", {
-                description: err?.message || "Failed to load programs. Please try again later.",
+                description: "Failed to load programs. Please try again later.",
                 position: "top-center"
             })
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [getPrograms]);
+
+    useEffect(() => {
+        fetchPrograms().then(() => console.log(''));
+        }, [fetchPrograms]);
 
     const handleDelete = async (id: string) => {
         try {
             await deleteProgram(id);
             setPrograms(programs.filter(program => program.id !== id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Failed to delete program:", err);
             // alert("Failed to delete program. Please try again.");
             toast.error("Error", {
-                description: err?.message || "Failed to delete program. Please try again."
+                description: "Failed to delete program. Please try again."
             })
         }
     };

@@ -1,18 +1,5 @@
 import { API_ENDPOINTS } from "@/lib/constants/api";
-import { Enrollment } from "@/types/client";
-
-export interface CreateEnrollmentDto {
-  clientId: string;
-  programId: string;
-  enrollmentDate: string;
-  status: 'active' | 'completed' | 'withdrawn';
-  exitDate?: string;
-}
-
-export interface UpdateEnrollmentDto {
-  status?: 'active' | 'completed' | 'withdrawn';
-  exitDate?: string;
-}
+import {CreateEnrollmentDto, Enrollment, UpdateEnrollmentDto} from "@/types/enrollment";
 
 const enrollmentService = {
   /**

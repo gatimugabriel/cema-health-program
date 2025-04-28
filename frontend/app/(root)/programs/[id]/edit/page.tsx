@@ -12,14 +12,11 @@ import {toast} from 'sonner';
 import programService from '@/lib/services/program.service';
 
 interface EditProgramPageProps {
-    params: {
-        id: string;
-    };
+    params: Promise<{ id: string }>;
 }
 
 export default function EditProgramPage({params}: EditProgramPageProps) {
-    // @ts-ignore
-    const pageParams: EditProgramPageProps['params'] = use(params)
+    const {id} = use(params)
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -31,29 +28,30 @@ export default function EditProgramPage({params}: EditProgramPageProps) {
     });
 
     useEffect(() => {
-        fetchProgramDetails();
-    }, [pageParams.id]);
+        const fetchProgramDetails = async () => {
+            try {
+                setIsLoading(true);
+                setError(null);
+                const program = await programService.getProgramById(id);
+                setFormData({
+                    name: program.name,
+                    description: program.description || '',
+                    active: program.active,
+                });
+            } catch (error) {
+                console.error("Failed to fetch program details:", error);
+                setError("Failed to load program details. Please try again.");
+                toast("Error", {
+                    description: "Failed to load program details",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const fetchProgramDetails = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const program = await programService.getProgramById(pageParams.id);
-            setFormData({
-                name: program.name,
-                description: program.description || '',
-                active: program.active,
-            });
-        } catch (error) {
-            console.error("Failed to fetch program details:", error);
-            setError("Failed to load program details. Please try again.");
-            toast("Error", {
-                description: "Failed to load program details",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        fetchProgramDetails();
+    }, [id]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
@@ -76,11 +74,11 @@ export default function EditProgramPage({params}: EditProgramPageProps) {
 
         try {
             setIsSubmitting(true);
-            await programService.updateProgram(pageParams.id, formData);
+            await programService.updateProgram(id, formData);
             toast.success("Success", {
                 description: "Program updated successfully",
             });
-            router.push(`/programs/${pageParams.id}`);
+            router.push(`/programs/${id}`);
         } catch (error) {
             console.error("Failed to update program:", error);
             toast.error("Error", {

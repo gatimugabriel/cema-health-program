@@ -1,6 +1,16 @@
 import {API_ENDPOINTS} from "@/lib/constants/api";
 import {PaginatedResponse} from "@/types/common";
 
+type searchParams  = {
+    query?: string;
+    page?: number;
+    pageSize?: number;
+    paginate?: boolean;
+    sortBy?: string
+    sortOrder?:string
+
+};
+
 const programService = {
     getPrograms: async (): Promise<Program[]> => {
         try {
@@ -11,12 +21,12 @@ const programService = {
                 },
                 credentials: "include",
             });
-            if (!response.ok) {
-                throw new Error(`Error fetching programs: ${response.status}`);
-            }
+            // if (!response.ok) {
+            //     throw new Error(`Error fetching programs: ${response.status}`);
+            // }
             return await response.json();
         } catch (error) {
-            console.error("Failed to fetch dummyPrograms:", error);
+            console.error("Failed to fetch programs:", error);
             throw error;
         }
     },
@@ -114,7 +124,7 @@ const programService = {
         }
     },
 
-    searchProgram: async (params: any = {}): Promise<PaginatedResponse<Program>> => {
+    searchProgram: async (params: searchParams = {}): Promise<PaginatedResponse<Program>> => {
         const {page = 1, pageSize = 10, query = '', sortBy, sortOrder} = params;
 
         const searchParams = new URLSearchParams();
