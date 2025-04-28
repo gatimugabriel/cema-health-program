@@ -1,6 +1,6 @@
 import {API_ENDPOINTS} from "../constants/api";
 import {Client, ClientFormData, ClientSearchParams} from "@/types/client";
-import {PaginatedResponse} from "@/types/common";
+import {PaginatedResponse, StandardResponse} from "@/types/common";
 
 const clientService = {
     /**
@@ -75,7 +75,7 @@ const clientService = {
     /**
      * Create a new client
      */
-    createClient: async (clientData: ClientFormData): Promise<Client> => {
+    createClient: async (clientData: ClientFormData): Promise<StandardResponse<Client>> => {
         try {
             const response = await fetch(API_ENDPOINTS.CLIENTS, {
                 method: "POST",

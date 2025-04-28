@@ -56,7 +56,7 @@ export default function NewClientPage() {
 
             const newClient = await createClient(formattedData);
 
-            router.push(`/clients/${newClient.id}`);
+            router.push(`/clients/${newClient.data.id}`);
         } catch (err: unknown) {
             // @ts-expect-error - unknowns
             setError(err?.message || "Failed to create client. Please try again.");

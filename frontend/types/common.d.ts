@@ -8,3 +8,9 @@ export interface PaginatedResponse<T> {
         totalPages: number;
     }
 }
+
+export interface StandardResponse<T> {
+    success: boolean;
+    message?: string;
+    data: T;
+}
