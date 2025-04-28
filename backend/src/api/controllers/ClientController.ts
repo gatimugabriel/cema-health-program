@@ -103,8 +103,18 @@ export class ClientController {
             const query = req.query.q as string;
             const page = parseInt(req.query.page as string) || 1;
             const pageSize = parseInt(req.query.pageSize as string) || 10;
+            const paginate = req.query.paginate === 'true';
 
-            const { clients, totalCount, totalPages } = await this.clientService.searchClients(query, page, pageSize);
+            const { clients, totalCount, totalPages } = await this.clientService.searchClients(query, paginate, page, pageSize);
+
+            if(!paginate){
+                res.status(200).json({
+                    success: true,
+                    data: clients,
+                    totalFound: totalCount
+                });
+                return
+            }
 
             res.status(200).json({
                 success: true,
@@ -116,6 +126,8 @@ export class ClientController {
                     totalPages
                 }
             });
+
+
         } catch (error) {
             res.status(500);
             throw new Error(`Error searching clients: ${(error as Error).message}`);

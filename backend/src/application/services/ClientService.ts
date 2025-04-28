@@ -77,13 +77,21 @@ export class ClientService {
      * Searches for clients based on a query string.
      * this method is also paginated
      * @param query - The search query.
+     * @param paginate - Whether to paginate the results.
      * @param page - The page number to retrieve.
      * @param pageSize - The number of clients per page.
      * @returns An object containing the clients, total count, and total pages.
      * */
-    async searchClients(query: string, page: number = 1, pageSize: number = 10): Promise<{ clients: Client[]; totalCount: number; totalPages: number }> {
+    async searchClients(query: string, paginate = true, page: number = 1, pageSize: number = 10): Promise<{ clients: Client[]; totalCount: number; totalPages: number }> {
         if (!query || query.trim() === '') {
             return this.getAllClients(page, pageSize);
+        }
+        // clean query
+        query = query.replace(/^["']|["']$/g, '')
+
+        if (!paginate) {
+            const { clients } = await this.clientRepository.searchWithoutPagination(query);
+            return { clients, totalCount: clients.length, totalPages: 1 };
         }
 
         const { clients, totalCount } = await this.clientRepository.search(query, page, pageSize);
