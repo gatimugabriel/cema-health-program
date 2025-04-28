@@ -24,9 +24,10 @@ export interface ClientFormData {
 }
 
 export interface ClientSearchParams {
+    query?: string;
+    paginate: boolean
     page?: number;
     pageSize?: number;
-    query?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
 }

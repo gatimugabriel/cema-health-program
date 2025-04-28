@@ -14,47 +14,41 @@ interface ProgramSearchProps {
 export function ProgramSearch({onSelect}: ProgramSearchProps) {
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-
-    const [isLoading, setIsLoading] = useState(false)
-    const [programs, setPrograms] = useState<Program[]>([])
-    const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null)
-    const [error, setError] = useState<string | null>(null)
-    const handleSearch = async (query: string) => {
-        if (query.length === 0) {
-            setPrograms([])
-            return
-        }
-        setIsLoading(true)
-        setError(null)
-        try {
-            const response = await programService.searchProgram(query)
-            setPrograms(response.data)
-        } catch (error: any) {
-            setError(error.message)
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    const handleDebouncedSearch = (query: string) => {
-        if (debounceTimer) {
-            clearTimeout(debounceTimer)
-        }
-        setDebounceTimer(
-            setTimeout(() => {
-                handleSearch(query)
-            }, 500)
-        )
-    }
+    const [programs, setPrograms] = useState<Program[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (searchQuery.length > 0) {
-            handleDebouncedSearch(searchQuery)
-        } else {
-            setPrograms([])
-        }
-    }, [searchQuery]);
+        const controller = new AbortController();
 
+        const fetchPrograms = async () => {
+            if (searchQuery.length < 2) {
+                setPrograms([]);
+                return;
+            }
+
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const response = await programService.searchPrograms({
+                    query: searchQuery,
+                    paginate: false
+                });
+                setPrograms(response.data);
+            } catch (error: any) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        const timer = setTimeout(fetchPrograms, 300);
+        return () => {
+            controller.abort();
+            clearTimeout(timer);
+        };
+    }, [searchQuery]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -70,7 +64,7 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[400px] p-0">
-                <Command>
+                <Command shouldFilter={false}>
                     <CommandInput
                         placeholder="Search programs by name..."
                         value={searchQuery}
@@ -79,17 +73,20 @@ export function ProgramSearch({onSelect}: ProgramSearchProps) {
                     <CommandList>
                         {isLoading ? (
                             <div className="p-4 text-center text-sm">Searching...</div>
+                        ) : error ? (
+                            <div className="p-4 text-center text-sm text-red-500">{error}</div>
                         ) : (
                             <>
-                                <CommandEmpty>No programs found.</CommandEmpty>
+                                <CommandEmpty>No programs found</CommandEmpty>
                                 <CommandGroup>
-                                    {programs?.map((program) => (
+                                    {programs.map((program) => (
                                         <CommandItem
                                             key={program.id}
                                             value={program.id}
                                             onSelect={() => {
                                                 onSelect(program.id);
                                                 setOpen(false);
+                                                setSearchQuery("");
                                             }}
                                         >
                                             {program.name}

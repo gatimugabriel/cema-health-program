@@ -1,30 +1,25 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import {Client} from "@/types/client";
+import clientService from "@/lib/services/client.service";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Edit, MoreHorizontal, Search, Trash2, UserPlus, X} from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
+import {Card, CardContent, CardHeader, CardTitle,} from "@/components/ui/card";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -35,20 +30,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious
-} from "@/components/ui/pagination";
-import { Edit, Trash2, MoreHorizontal, Plus, Search, UserPlus, X } from "lucide-react";
-
-import { Client, ClientSearchParams } from "@/types/client";
-import clientService  from "@/lib/services/client.service";
-import {PaginatedResponse} from "@/types/common";
 
 export default function ClientsPage() {
     const router = useRouter();
@@ -70,46 +51,25 @@ export default function ClientsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedClient, setSelectedClient] = useState<string | null>(null);
-    const{ getClients, searchClients, deleteClient } = clientService
-
-    useEffect(() => {
-        fetchClients();
-    }, [pagination.page]);
-
-    useEffect(() => {
-        const params = new URLSearchParams();
-        if (pagination.page > 1) params.set("page", pagination.page.toString());
-        if (searchQuery) params.set("query", searchQuery);
-
-        const url = `/clients${params.toString() ? `?${params.toString()}` : ""}`;
-        router.push(url, { scroll: false });
-    }, [pagination.page, searchQuery, router]);
+    // const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
     const fetchClients = async () => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const params: ClientSearchParams = {
+            const params = {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
-                sortBy: "lastName",
-                sortOrder: "asc"
+                query: searchQuery,
+                paginate: true
             };
 
-            let response: PaginatedResponse<Client>;
-
-            if (searchQuery) {
-                setIsSearching(true);
-                params.query = searchQuery;
-                response = await searchClients(params);
-            } else {
-                setIsSearching(false);
-                response = await getClients(params);
-            }
+            const response = await clientService.searchClients(params);
 
             setClients(response.data);
             setPagination(response.pagination);
+            setIsSearching(!!searchQuery);
         } catch (err) {
             setError("Failed to load clients. Please try again later.");
             console.error("Error fetching clients:", err);
@@ -118,32 +78,39 @@ export default function ClientsPage() {
         }
     };
 
-    //--- search
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchClients();
+        }, 300);
 
-        // reset to page 1 when searching
-        setPagination(prev => ({ ...prev, page: 1 }));
-        fetchClients();
+        return () => clearTimeout(timer);
+    }, [pagination.page, searchQuery]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (pagination.page > 1) params.set("page", pagination.page.toString());
+        if (searchQuery) params.set("query", searchQuery);
+
+        router.push(`/clients?${params.toString()}`, {scroll: false});
+    }, [pagination.page, searchQuery, router]);
+
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+        setPagination(prev => ({...prev, page: 1}));
     };
 
     const clearSearch = () => {
         setSearchQuery("");
-        setPagination(prev => ({ ...prev, page: 1 }));
-
-        // --- wait for state update before fetching
-        setTimeout(() => fetchClients(), 0);
+        setPagination(prev => ({...prev, page: 1}));
     };
 
     const handlePageChange = (newPage: number) => {
-        setPagination(prev => ({ ...prev, page: newPage }));
+        setPagination(prev => ({...prev, page: newPage}));
     };
 
     const handleDelete = async (id: string) => {
         try {
-            await deleteClient(id);
-
-            // Refresh client list after deletion
+            await clientService.deleteClient(id);
             fetchClients();
         } catch (err) {
             console.error("Failed to delete client:", err);
@@ -153,7 +120,7 @@ export default function ClientsPage() {
 
     // Generate pagination items
     const getPaginationItems = () => {
-        const { page, totalPages } = pagination;
+        const {page, totalPages} = pagination;
         const items = [];
 
         // Always show first page
@@ -161,7 +128,10 @@ export default function ClientsPage() {
             <PaginationItem key="first">
                 <PaginationLink
                     href="#"
-                    onClick={(e) => { e.preventDefault(); handlePageChange(1); }}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(1);
+                    }}
                     isActive={page === 1}
                 >
                     1
@@ -173,7 +143,7 @@ export default function ClientsPage() {
         if (page > 3) {
             items.push(
                 <PaginationItem key="ellipsis1">
-                    <PaginationEllipsis />
+                    <PaginationEllipsis/>
                 </PaginationItem>
             );
         }
@@ -184,7 +154,10 @@ export default function ClientsPage() {
                 <PaginationItem key={i}>
                     <PaginationLink
                         href="#"
-                        onClick={(e) => { e.preventDefault(); handlePageChange(i); }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(i);
+                        }}
                         isActive={page === i}
                     >
                         {i}
@@ -197,7 +170,7 @@ export default function ClientsPage() {
         if (page < totalPages - 2) {
             items.push(
                 <PaginationItem key="ellipsis2">
-                    <PaginationEllipsis />
+                    <PaginationEllipsis/>
                 </PaginationItem>
             );
         }
@@ -208,7 +181,10 @@ export default function ClientsPage() {
                 <PaginationItem key="last">
                     <PaginationLink
                         href="#"
-                        onClick={(e) => { e.preventDefault(); handlePageChange(totalPages); }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(totalPages);
+                        }}
                         isActive={page === totalPages}
                     >
                         {totalPages}
@@ -226,18 +202,20 @@ export default function ClientsPage() {
                 <h1 className="text-3xl font-bold">Clients</h1>
                 <Button asChild>
                     <Link href="/clients/new">
-                        <UserPlus className="mr-2 h-4 w-4" />
+                        <UserPlus className="mr-2 h-4 w-4"/>
                         New Client
                     </Link>
                 </Button>
             </div>
 
+            {/* Search Input */}
             <Card className="mb-6">
                 <CardHeader className="pb-3">
                     <CardTitle>Search Clients</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSearch} className="flex gap-2">
+                    {/* @ts-ignore */}
+                    <form onSubmit={handleSearchChange} className="flex gap-2">
                         <div className="relative flex-1">
                             <Input
                                 placeholder="Search by name, ID number, or phone number..."
@@ -245,14 +223,14 @@ export default function ClientsPage() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="pl-10"
                             />
-                            <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                            <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground"/>
                             {searchQuery && (
                                 <button
                                     type="button"
                                     onClick={clearSearch}
                                     className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
                                 >
-                                    <X className="h-5 w-5" />
+                                    <X className="h-5 w-5"/>
                                 </button>
                             )}
                         </div>
@@ -287,7 +265,8 @@ export default function ClientsPage() {
                         <div className="text-center p-8">
                             {isSearching ? (
                                 <>
-                                    <p className="text-muted-foreground mb-4">No clients found matching your search criteria</p>
+                                    <p className="text-muted-foreground mb-4">No clients found matching your search
+                                        criteria</p>
                                     <Button variant="outline" onClick={clearSearch}>Clear Search</Button>
                                 </>
                             ) : (
@@ -331,24 +310,27 @@ export default function ClientsPage() {
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button variant="ghost" size="icon">
-                                                            <MoreHorizontal className="h-4 w-4" />
+                                                            <MoreHorizontal className="h-4 w-4"/>
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem onClick={() => router.push(`/clients/${client.id}`)}>
+                                                        <DropdownMenuItem
+                                                            onClick={() => router.push(`/clients/${client.id}`)}>
                                                             View Details
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className={`bg-green-500/10`} onClick={() => router.push(`/enrollments/new/via-client/${client.id}`)}>
+                                                        <DropdownMenuItem className={`bg-green-500/10`}
+                                                                          onClick={() => router.push(`/enrollments/new/via-client/${client.id}`)}>
                                                             Enroll to program
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => router.push(`/clients/${client.id}/edit`)}>
-                                                            <Edit className="mr-2 h-4 w-4" /> Edit
+                                                        <DropdownMenuItem
+                                                            onClick={() => router.push(`/clients/${client.id}/edit`)}>
+                                                            <Edit className="mr-2 h-4 w-4"/> Edit
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             className="text-red-600"
                                                             onClick={() => setSelectedClient(client.id)}
                                                         >
-                                                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                                            <Trash2 className="mr-2 h-4 w-4"/> Delete
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -398,7 +380,8 @@ export default function ClientsPage() {
                                 Showing {clients.length} of {pagination.totalCount} clients
                                 {isSearching && (
                                     <>
-                                        {" "}• <Button variant="link" className="p-0" onClick={clearSearch}>Clear Search</Button>
+                                        {" "}• <Button variant="link" className="p-0" onClick={clearSearch}>Clear
+                                        Search</Button>
                                     </>
                                 )}
                             </div>
