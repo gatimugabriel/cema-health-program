@@ -6,7 +6,9 @@ const clientService = {
     /**
      * Get clients with pagination
      */
-    getClients: async (params: ClientSearchParams = {}): Promise<PaginatedResponse<Client>> => {
+    getClients: async (params: ClientSearchParams = {
+        paginate: false
+    }): Promise<PaginatedResponse<Client>> => {
         const {page = 1, pageSize = 10, sortBy, sortOrder} = params;
 
         const searchParams = new URLSearchParams();
@@ -18,7 +20,6 @@ const clientService = {
 
         try {
             const response = await fetch(`${API_ENDPOINTS.CLIENTS}?${searchParams.toString()}`);
-
             if (!response.ok) {
                 throw new Error(`Error fetching clients: ${response.status}`);
             }
@@ -30,57 +31,26 @@ const clientService = {
         }
     },
 
-    /**
-     * Search clients
-     */
-    searchClients: async (params: ClientSearchParams = {}): Promise<PaginatedResponse<Client>> => {
-        const {page = 1, pageSize = 10, query = '', sortBy, sortOrder} = params;
+    searchClients: async (params: {
+        query?: string;
+        page?: number;
+        pageSize?: number;
+        paginate?: boolean;
+    }): Promise<PaginatedResponse<Client>> => {
+        const url = new URL(`${API_ENDPOINTS.CLIENTS}/search`);
 
-        const searchParams = new URLSearchParams();
-        searchParams.append('page', page.toString());
-        searchParams.append('pageSize', pageSize.toString());
-        searchParams.append('query', query);
+        if (params.query) url.searchParams.append("q", params.query);
+        if (params.paginate !== undefined) url.searchParams.append("paginate", params.paginate.toString());
+        if (params.page) url.searchParams.append("page", params.page.toString());
+        if (params.pageSize) url.searchParams.append("pageSize", params.pageSize.toString());
 
-        if (sortBy) searchParams.append('sortBy', sortBy);
-        if (sortOrder) searchParams.append('sortOrder', sortOrder);
+        const response = await fetch(url.toString(), {
+            credentials: "include",
+        });
 
-        try {
-            const response = await fetch(`${API_ENDPOINTS.CLIENTS_SEARCH}?${searchParams.toString()}`);
-
-            if (!response.ok) {
-                throw new Error(`Error searching clients: ${response.status}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error("Failed to search clients:", error);
-            throw error;
-        }
+        if (!response.ok) throw new Error(`Error searching clients: ${response.status}`);
+        return await response.json();
     },
-
-    /**
-     * Search clients without pagination
-     */
-    searchClientsWithoutPagination: async (params: ClientSearchParams = {}): Promise<Client[]> => {
-        const {query = ''} = params;
-
-        const searchParams = new URLSearchParams();
-        searchParams.append('query', query);
-
-        try {
-            const response = await fetch(`${API_ENDPOINTS.CLIENTS_SEARCH_WITHOUT_PAGINATION}?${searchParams.toString()}`);
-
-            if (!response.ok) {
-                throw new Error(`Error searching clients: ${response.status}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error("Failed to search clients:", error);
-            throw error;
-        }
-    },
-
 
     /**
      * Get client by ID
