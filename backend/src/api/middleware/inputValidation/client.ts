@@ -1,8 +1,8 @@
-import {check, body, query} from "express-validator";
+import {body, check} from "express-validator";
 
 export const validateClientData = [
-    check('firstName').notEmpty().withMessage('First name is required').isLength({ min: 3 }).withMessage("firstName should be at least 3 characters"),
-    check('lastName').notEmpty().withMessage('Last name is required').isLength({ min: 3 }).withMessage("lastName should be at least 3 characters"),
+    check('firstName').notEmpty().withMessage('First name is required').isLength({min: 3}).withMessage("firstName should be at least 3 characters"),
+    check('lastName').notEmpty().withMessage('Last name is required').isLength({min: 3}).withMessage("lastName should be at least 3 characters"),
     check('identificationNumber').notEmpty().withMessage('Identification number is required'),
     check('dateOfBirth')
         .notEmpty().withMessage('Date of birth is required')
@@ -29,8 +29,8 @@ export const validateClientData = [
 ];
 
 export const validateClientUpdateData = [
-    check('firstName').optional().isLength({ min: 3 }).withMessage("firstName should be at least 3 characters"),
-    check('lastName').optional().isLength({ min: 3 }).withMessage("lastName should be at least 3 characters"),
+    check('firstName').optional().isLength({min: 3}).withMessage("firstName should be at least 3 characters"),
+    check('lastName').optional().isLength({min: 3}).withMessage("lastName should be at least 3 characters"),
     check('email')
         .optional()
         .isEmail().withMessage('Email must be valid'),
@@ -40,8 +40,3 @@ export const validateClientUpdateData = [
     check('address').optional()
 ];
 
-export const validateClientSearchQuery = [
-    query('q').optional().isString().withMessage('Search query must be a string'),
-    query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
-    query('pageSize').optional().isInt({ min: 1, max: 100 }).withMessage('Page size must be between 1 and 100')
-];

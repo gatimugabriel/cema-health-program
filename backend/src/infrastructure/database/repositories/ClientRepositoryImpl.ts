@@ -71,4 +71,22 @@ export class ClientRepositoryImpl implements IClientRepository {
 
         return { clients, totalCount };
     }
+
+    /**
+     * Searches for clients based on a query string.
+     * this method is not paginated
+     * */
+    async searchWithoutPagination(query: string): Promise<{ clients: Client[]; totalCount: number }> {
+        const [clients, totalCount] = await this.repo.findAndCount({
+            where: [
+                { firstName: ILike(`%${query}%`) },
+                { lastName: ILike(`%${query}%`) },
+                { identificationNumber: ILike(`%${query}%`) },
+                { email: ILike(`%${query}%`) },
+                { phone: ILike(`%${query}%`) }
+            ],
+            // relations: ['enrollments', 'enrollments.program']
+        });
+        return { clients, totalCount };
+    }
 }
