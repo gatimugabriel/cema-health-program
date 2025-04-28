@@ -4,28 +4,36 @@
 
 CEMA Health Information Management System is a solution designed to help healthcare providers manage clients and health programs efficiently. The system enables healthcare professionals to register clients, create health programs, and enroll clients into various programs while maintaining detailed records of the same.
 
+- **LIVE Application**: [Live Demo](https://cema-health-info-system.onrender.com)
+- **POWERPOINT Presentation**: [POWER-POINT PRESENTATION](https://docs.google.com/presentation/d/1FntbznbpXmed6XQyAXGWvyav1PJv8rgbuz1p5AqGM7s/edit?usp=sharing)
+
 ## Table of Contents
 
 - [CEMA Health Program Management System](#cema-health-program-management-system)
-    - [Overview](#overview)
-    - [Table of Contents](#table-of-contents)
-    - [Features](#features)
-    - [System Architecture](#system-architecture)
-        - [Architecture Diagram](#architecture-diagram)
-        - [Backend Architecture](#backend-architecture)
-        - [Frontend Architecture](#frontend-architecture)
-    - [Tech Stack](#tech-stack)
-    - [Setup & Installation](#setup--installation)
-        - [Prerequisites](#prerequisites)
-        - [Manual Setup](#manual-setup)
-        - [Docker Setup](#docker-setup)
-    - [API Documentation](#api-documentation)
-    - [Project Structure](#project-structure)
-    - [Submission Requirements](#submission-requirements)
-    - [Development Guidelines](#development-guidelines)
-    - [Testing](#testing)
-    - [Security Considerations](#security-considerations)
-    - [License](#license)
+  - [Overview](#overview)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [System Architecture](#system-architecture)
+    - [Architecture Diagram](#architecture-diagram)
+    - [Backend Architecture](#backend-architecture)
+    - [Frontend Architecture](#frontend-architecture)
+  - [Tech Stack](#tech-stack)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+  - [Setup \& Installation](#setup--installation)
+    - [Prerequisites](#prerequisites)
+    - [Manual Setup](#manual-setup)
+      - [Backend Setup](#backend-setup)
+      - [Frontend Setup](#frontend-setup)
+    - [Docker Setup](#docker-setup)
+  - [API Documentation](#api-documentation)
+  - [Project Structure](#project-structure)
+  - [Submission Requirements](#submission-requirements)
+  - [Development Guidelines](#development-guidelines)
+    - [To contribute:](#to-contribute)
+  - [Testing](#testing)
+    - [Backend Testing](#backend-testing)
+  - [Security Considerations](#security-considerations)
 
 ## Features
 
@@ -181,14 +189,43 @@ git clone https://github.com/gatimugabriel/cema-health-program.git
 cd cema-health-program
 ```
 
-2. Build and run with Docker Compose
+2. Configure environment variables
+```bash
+# For backend
+cp backend/.env.example backend/.env
+# Edit backend/.env with your configurations
+
+# For frontend
+cp frontend/.env.example frontend/.env.local
+# Edit frontend/.env.local with your configurations
+```
+
+3. Build and run with Docker Compose
 ```bash
 docker-compose up --build
 ```
 
-This will start both the frontend and backend services:
+This will start all services:
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:8080`
+- PostgreSQL Database: `localhost:5432`
+
+4. To run in detached mode (background)
+```bash
+docker-compose up -d
+```
+
+5. To stop the containers
+```bash
+docker-compose down
+```
+
+6. To view logs
+```bash
+docker-compose logs -f
+# Or for a specific service
+docker-compose logs -f backend
+```
 
 ## API Documentation
 
@@ -226,10 +263,10 @@ For more details on the frontend structure, refer to the [Frontend README](front
 
 ## Submission Requirements
 
-- **GitHub Repository**: [View on GitHub](https://github.com/yourusername/cema-health-program)
+- **GitHub Repository**: [View on GitHub](https://github.com/gatimugabriel/cema-health-program)
 - **Presentation**: [View Presentation](presentation-link)
 - **Demo Video**: [Watch Demo](demo-link)
-- **Deployed Application**: [Live Demo](https://deployed-app-url.com)
+- **Deployed Application**: [Live Demo](https://cema-health-info-system.onrender.com)
 
 ## Development Guidelines
 
@@ -270,3 +307,4 @@ pnpm test # or npm test
 - **CORS**: Configured to allow only specific origins
 - **Environment Variables**: Sensitive data stored in environment variables
 - **SQL Injection Protection**: Using TypeORM's parameterized queries
+
