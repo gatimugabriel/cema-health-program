@@ -4,7 +4,7 @@
 
 CEMA Health Information Management System is a solution designed to help healthcare providers manage clients and health programs efficiently. The system enables healthcare professionals to register clients, create health programs, and enroll clients into various programs while maintaining detailed records of the same.
 
-- **LIVE Application**: [Live Demo](https://cema-health-info-system.onrender.com)
+- **LIVE Application**: [Live Demo](https://cema-his.vercel.app/)
 - **POWERPOINT Presentation**: [POWER-POINT PRESENTATION](https://docs.google.com/presentation/d/1FntbznbpXmed6XQyAXGWvyav1PJv8rgbuz1p5AqGM7s/edit?usp=sharing)
 
 ## Table of Contents
