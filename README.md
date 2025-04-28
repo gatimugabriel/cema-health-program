@@ -4,7 +4,7 @@
 
 CEMA Health Information Management System is a solution designed to help healthcare providers manage clients and health programs efficiently. The system enables healthcare professionals to register clients, create health programs, and enroll clients into various programs while maintaining detailed records of the same.
 
-- **LIVE Application**: [Live Demo](https://cema-health-info-system.onrender.com)
+- **LIVE Application**: [Live Demo](https://cema-his.vercel.app/)
 - **POWERPOINT Presentation**: [POWER-POINT PRESENTATION](https://docs.google.com/presentation/d/1FntbznbpXmed6XQyAXGWvyav1PJv8rgbuz1p5AqGM7s/edit?usp=sharing)
 
 ## Table of Contents
@@ -157,6 +157,12 @@ cp .env.example .env
 4. Start the backend server
 ```bash
 pnpm run dev # or npm run dev
+```
+
+5. Add test data
+If you wish to seed initial test data into the database, run:
+```bash
+pnpm run db:seed # or npm run db:seed
 ```
 
 The backend API will be available at `http://localhost:8080` or at the `PORT` which you set in `.env`
