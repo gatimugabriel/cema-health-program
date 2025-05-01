@@ -2,9 +2,12 @@ import {Router} from "express";
 import {ClientController} from "../controllers/ClientController";
 import {requireBody, validate, validateSearchQuery} from "../middleware/inputValidation/baseValidator";
 import {validateClientData, validateClientUpdateData} from "../middleware/inputValidation/client";
+import {authenticate} from "../middleware/auth.middleware";
 
 const router = Router();
 const controller = new ClientController();
+
+router.use(authenticate)
 
 router.post("/", ...validateClientData, validate, controller.createClient.bind(controller)); //new client
 router.get("/", controller.getAllClients.bind(controller)); // get all

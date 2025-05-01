@@ -1,24 +1,27 @@
-import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique} from "typeorm"
+import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn} from "typeorm"
 
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({nullable: false})
-    firstName: string;
-
-    @Column()
-    lastName: string;
-
     @Column({unique: true, nullable: false})
     email: string;
+
+    @Column()
+    password: string;
 
     @Column({unique: true, nullable: false})
     phone: string;
 
-    @Column()
-    password: string;
+    @Column({ nullable: false})
+    firstName: string;
+
+    @Column({ nullable: false})
+    lastName: string;
+
+    @Column({default: false})
+    isVerified: boolean;
 
     @Column({type: "enum", enum: ["doctor", "admin"], default: "doctor"})
     role: 'doctor' | 'admin';
@@ -26,7 +29,7 @@ export class User {
     @CreateDateColumn()
     createdAt: Date;
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     updatedAt: Date
 
     //--- Relations ---//

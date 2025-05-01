@@ -13,7 +13,9 @@ const handleErrors = (error: any, req: Request, res: Response, next: NextFunctio
 
     // DB errors -> raised by TYPEORM
     if (error instanceof QueryFailedError) {
-        handleDBErrors(error);
+        const dbError = handleDBErrors(error);
+        message = dbError.message;
+        statusCode = dbError.statusCode;
     }
 
     if (message.includes('Invalid')) {
@@ -36,18 +38,39 @@ export const handleDBErrors = (error: any) => {
         const err = error as any;
         switch (err.code) {
             case "23505":
-                return `Duplicate value for field: ${err.detail.match(/\(([^)]+)\)/)[1]}`;
+                // Extract the field name from the detail message
+                const fieldMatch = err.detail.match(/\(([^)]+)\)/);
+                const field = fieldMatch ? fieldMatch[1] : 'field';
+                return {
+                    message: `This ${field} is already in use`,
+                    statusCode: 409 
+                };
             case '23503':
-                return `Related record not found for field: ${err.detail.match(/\(([^)]+)\)/)[1]}`;
+                return {
+                    message: `Related record not found for field: ${err.detail.match(/\(([^)]+)\)/)[1]}`,
+                    statusCode: 400
+                };
             case '23502':
-                return `Field cannot be null: ${err.detail.match(/\(([^)]+)\)/)[1]}`;
+                return {
+                    message: `Field cannot be null: ${err.detail.match(/\(([^)]+)\)/)[1]}`,
+                    statusCode: 400
+                };
             case '22P02':
-                return `Invalid input syntax for type: ${err.detail.match(/\(([^)]+)\)/)[1]}`;
+                return {
+                    message: `Invalid input syntax for type: ${err.detail.match(/\(([^)]+)\)/)[1]}`,
+                    statusCode: 400
+                };
             default:
-                return 'Internal server error';
+                return {
+                    message: 'Internal server error',
+                    statusCode: 500
+                };
         }
     }
-    return error.message;
+    return {
+        message: error.message,
+        statusCode: 500
+    };
 }
 
 export default { notFound, handleErrors }
