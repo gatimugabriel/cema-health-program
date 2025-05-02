@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import clientService from "@/lib/services/client.service";
-import { EnrollmentForm } from "@/components/enrollment-form";
+import { EnrollmentForm } from "@/components/forms/enrollment-form";
 
 interface ClientEnrollmentPageProps {
     params: Promise<{ clientId: string }>;

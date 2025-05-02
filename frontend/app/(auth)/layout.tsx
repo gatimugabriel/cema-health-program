@@ -1,11 +1,12 @@
-import { ReactNode } from "react";
-import { redirect } from "next/navigation";
+import {ReactNode} from "react";
+import {AuthProvider} from "@/components/providers/auth-provider";
 
-const AuthLayout = async ({ children }: { children: ReactNode }) => {
-    const isUserAuthenticated = true
-    if (isUserAuthenticated) redirect("/dashboard");
-
-    return <div className="">{children}</div>;
+const AuthLayout = ({children}: { children: ReactNode }) => {
+    return (
+        <AuthProvider>
+            <div className="auth-layout">{children}</div>
+        </AuthProvider>
+    )
 };
 
 export default AuthLayout;

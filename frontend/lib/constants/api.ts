@@ -17,4 +17,8 @@ export const API_ENDPOINTS = {
     ENROLLMENT: (id: string) => `${API_BASE_URL}/enrollment/${id}`,
     CLIENT_ENROLLMENTS: (clientId: string) => `${API_BASE_URL}/enrollment/client/${clientId}`,
     PROGRAM_ENROLLMENTS: (programId: string) => `${API_BASE_URL}/enrollment/program/${programId}`,
+
+    //Auth
+    LOGIN: `${API_BASE_URL}/auth/signin`,
+    SIGNUP: `${API_BASE_URL}/auth/signup`,
 };

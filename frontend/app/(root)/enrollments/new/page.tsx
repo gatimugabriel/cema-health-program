@@ -240,7 +240,7 @@
 // }
 
 
-import { EnrollmentForm } from "@/components/enrollment-form";
+import { EnrollmentForm } from "@/components/forms/enrollment-form";
 
 export default function NewEnrollmentPage() {
     return (

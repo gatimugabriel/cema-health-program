@@ -4,7 +4,7 @@ import AuthForm from '@/components/forms/auth/auth-form'
 export default function page() {
     return (
         <Suspense>
-            <AuthForm type="sign-in"/>
+            <AuthForm type="sign-up"/>
         </Suspense>
     )
 }

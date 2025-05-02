@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import  programService  from "@/lib/services/program.service";
-import { EnrollmentForm } from "@/components/enrollment-form";
+import { EnrollmentForm } from "@/components/forms/enrollment-form";
 
 interface ProgramEnrollmentPageProps {
     params: Promise<{ programId: string }>;
